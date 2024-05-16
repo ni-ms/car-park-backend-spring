@@ -1,12 +1,13 @@
 package com.carparkspring.demo.controller;
 
-import com.carparkspring.demo.service.JwtUtil;
+import com.carparkspring.demo.model.AppUser;
+import com.carparkspring.demo.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,25 +19,34 @@ public class JwtAuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtService jwtService;
 
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @PostMapping("/login")
-    public <AuthenticationRequest> ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-            );
-        } catch (Exception e) {
-            throw new Exception("Incorrect username or password", e);
+    @PostMapping("/addNewUser")
+    public String addNewUser(@RequestBody AppUser userInfo) {
+        return userDetailsService.addUser(userInfo);
+    }
+
+    @GetMapping("/user/userProfile")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public String userProfile() {
+        return "Welcome to User Profile";
+    }
+    @GetMapping("/admin/adminProfile")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public String adminProfile() {
+        return "Welcome to User Profile";
+    }
+
+    @PostMapping("/generateToken&quot")
+    public String authenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(authenticationRequest.getUsername());
+        } else {
+            throw new UsernameNotFoundException("invalid user request !");
         }
-
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
-
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }

@@ -31,14 +31,16 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
     private UserDetails loadAppUserByUsername(String username) {
-        Optional<AppUser> user = Optional.ofNullable(userRepository.findByEmail(username));
+        Optional<AppUser> user = userRepository.findByEmail(username);
         user.orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user.map(MyUserDetails::new).get();
     }
 
     private UserDetails loadAppAdminByUsername(String username) {
-        Optional<AppAdmin> admin = Optional.ofNullable(adminRepository.findByEmail(username));
+        Optional<AppAdmin> admin = adminRepository.findByEmail(username);
         admin.orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
         return admin.map(MyAdminDetails::new).get();
     }
+
+
 }
