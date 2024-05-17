@@ -12,8 +12,10 @@ public class AppAdmin {
     private Long id;
     private String firstName;
     private String lastName;
-    private String userName;
+    private String mobileNumber;
+
+    private String username;
     private String password;
     private String emailId;
-    private String mobileNumber;
+    private String roles;
 }

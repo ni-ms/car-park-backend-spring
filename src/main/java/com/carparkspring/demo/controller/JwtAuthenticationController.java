@@ -1,18 +1,19 @@
 package com.carparkspring.demo.controller;
 
 import com.carparkspring.demo.model.AppUser;
+import com.carparkspring.demo.model.AuthenticationRequest;
 import com.carparkspring.demo.service.JwtService;
+import com.carparkspring.demo.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/auth")
 public class JwtAuthenticationController {
 
     @Autowired
@@ -22,7 +23,7 @@ public class JwtAuthenticationController {
     private JwtService jwtService;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private MyUserDetailsService userDetailsService;
 
     @PostMapping("/addNewUser")
     public String addNewUser(@RequestBody AppUser userInfo) {
