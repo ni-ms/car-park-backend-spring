@@ -41,11 +41,11 @@ public class JwtAuthenticationController {
         return "Welcome to User Profile";
     }
 
-    @PostMapping("/generateToken&quot")
+    @PostMapping("/generateToken")
     public String authenticateAndGetToken(@RequestBody AuthenticationRequest authenticationRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmailId(), authenticationRequest.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authenticationRequest.getUsername());
+            return jwtService.generateToken(authenticationRequest.getEmailId());
         } else {
             throw new UsernameNotFoundException("invalid user request !");
         }
