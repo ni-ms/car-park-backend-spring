@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -16,4 +18,7 @@ public class Parking {
     private String parkingId;
     private int parkingSpaceNumber;
     private boolean spaceActive;
+
+    @OneToMany(mappedBy = "parking")
+    private List<CarBookingData> carBookings;
 }

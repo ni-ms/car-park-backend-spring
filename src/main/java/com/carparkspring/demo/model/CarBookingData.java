@@ -18,5 +18,8 @@ public class CarBookingData {
     private String carModel;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private int parkingSpaceNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "parkingSpaceNumber", referencedColumnName = "parkingSpaceNumber")
+    private Parking parking;
 }
