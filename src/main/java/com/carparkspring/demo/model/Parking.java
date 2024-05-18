@@ -9,14 +9,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeedBack {
+public class Parking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String userName;
-    private int slotRating;
-    private String slotID;
-    private String comments;
+    private String parkingId;
+    private int parkingSpaceNumber;
+    private boolean spaceActive;
 }
