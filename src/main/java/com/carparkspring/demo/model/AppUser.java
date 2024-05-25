@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -20,4 +22,7 @@ public class AppUser {
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
     private AppUserData appUserData;
+
+    @OneToMany(mappedBy = "appUser")
+    private List<CarBookingData> carBookings;
 }

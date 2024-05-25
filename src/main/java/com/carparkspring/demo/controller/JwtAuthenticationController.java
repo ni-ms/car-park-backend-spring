@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
 public class JwtAuthenticationController {
@@ -27,6 +28,7 @@ public class JwtAuthenticationController {
 
     @PostMapping("/addNewUser")
     public String addNewUser(@RequestBody AppUser userInfo) {
+        userInfo.getAppUserData().setAppUser(userInfo);
         return userDetailsService.addUser(userInfo);
     }
 

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -18,8 +19,17 @@ public class CarBookingData {
     private String carModel;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private String lpnumber;
+
+    @ElementCollection
+    private List<String> miscFacilities;
 
     @ManyToOne
     @JoinColumn(name = "parkingSpaceNumber", referencedColumnName = "parkingSpaceNumber")
     private Parking parking;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private AppUser appUser;
+
 }
