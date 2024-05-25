@@ -1,4 +1,4 @@
-package com.carparkspring.demo.model;
+package com.carparkspring.demo.model.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

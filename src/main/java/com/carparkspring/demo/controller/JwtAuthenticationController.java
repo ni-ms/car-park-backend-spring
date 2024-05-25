@@ -1,7 +1,8 @@
 package com.carparkspring.demo.controller;
 
+import com.carparkspring.demo.model.AppAdmin;
 import com.carparkspring.demo.model.AppUser;
-import com.carparkspring.demo.model.AuthenticationRequest;
+import com.carparkspring.demo.model.DTO.AuthenticationRequest;
 import com.carparkspring.demo.service.JwtService;
 import com.carparkspring.demo.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,12 @@ public class JwtAuthenticationController {
     public String addNewUser(@RequestBody AppUser userInfo) {
         userInfo.getAppUserData().setAppUser(userInfo);
         return userDetailsService.addUser(userInfo);
+    }
+
+    @PostMapping("/addNewAdmin")
+    public String addNewAdmin(@RequestBody AppAdmin adminInfo) {
+        AppAdmin admin = new AppAdmin(adminInfo);
+        return
     }
 
     @GetMapping("/user/userProfile")

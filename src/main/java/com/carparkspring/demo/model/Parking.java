@@ -16,6 +16,7 @@ public class Parking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String parkingId;
+    @Column(unique = true)
     private int parkingSpaceNumber;
     private boolean spaceActive;
 

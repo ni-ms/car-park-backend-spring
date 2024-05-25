@@ -1,8 +1,10 @@
 package com.carparkspring.demo.controller;
 
+import com.carparkspring.demo.model.DTO.CarBookingRequest;
 import com.carparkspring.demo.model.CarBookingData;
 import com.carparkspring.demo.service.CarBookingDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +28,9 @@ public class CarBookingDataController {
     }
 
     @PostMapping
-    public CarBookingData saveBooking(@RequestBody CarBookingData carBookingData) {
-        return carBookingDataService.saveBooking(carBookingData);
+    public ResponseEntity<CarBookingData> bookCar(@RequestBody CarBookingRequest carBookingRequest) {
+        CarBookingData carBookingData = carBookingDataService.bookCar(carBookingRequest);
+        return ResponseEntity.ok(carBookingData);
     }
 
     @DeleteMapping("/{id}")
