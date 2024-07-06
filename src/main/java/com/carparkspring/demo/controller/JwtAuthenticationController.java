@@ -33,11 +33,11 @@ public class JwtAuthenticationController {
         return userDetailsService.addUser(userInfo);
     }
 
-    @PostMapping("/addNewAdmin")
-    public String addNewAdmin(@RequestBody AppAdmin adminInfo) {
-        AppAdmin admin = new AppAdmin(adminInfo);
-        return
-    }
+//    @PostMapping("/addNewAdmin")
+//    public String addNewAdmin(@RequestBody AppAdmin adminInfo) {
+//        AppAdmin admin = new AppAdmin(adminInfo);
+//        return "Logged in";
+//    }
 
     @GetMapping("/user/userProfile")
     @PreAuthorize("hasAuthority('ROLE_USER')")

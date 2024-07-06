@@ -13,9 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarBookingData {
+    // Booking Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String carModel;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -25,11 +27,10 @@ public class CarBookingData {
     private List<String> miscFacilities;
 
     @ManyToOne
-    @JoinColumn(name = "parkingSpaceNumber", referencedColumnName = "parkingSpaceNumber")
-    private Parking parking;
+    @JoinColumn(name = "slot_id", referencedColumnName = "id")
+    private ParkingSlot parkingSlot;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private AppUser appUser;
-
 }

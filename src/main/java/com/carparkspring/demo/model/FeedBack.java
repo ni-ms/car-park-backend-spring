@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -12,11 +14,17 @@ import lombok.NoArgsConstructor;
 public class FeedBack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String userName;
-    private int slotRating;
-    private String slotID;
+    private Long feedbackId;
+
+    @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    private AppUser user;
+
+    @ManyToOne
+    @JoinColumn(name = "bookingId", referencedColumnName = "id")
+    private CarBookingData booking;
+
+    private int rating;
     private String comments;
+    private LocalDateTime feedbackTime;
 }

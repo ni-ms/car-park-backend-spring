@@ -15,11 +15,9 @@ public class Parking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String parkingId;
-    @Column(unique = true)
-    private int parkingSpaceNumber;
-    private boolean spaceActive;
+    private String location;
+    private int totalSpots;
 
     @OneToMany(mappedBy = "parking")
-    private List<CarBookingData> carBookings;
+    private List<ParkingSlot> parkingSlots;
 }
