@@ -17,5 +17,5 @@ public class CarBookingRequest {
     private String lpnumber;
     private List<String> miscFacilities;
     private Long parkingId;
-    private Integer userId;
+    private Long userId;
 }

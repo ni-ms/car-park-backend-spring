@@ -4,8 +4,10 @@ import com.carparkspring.demo.model.AppUser;
 import com.carparkspring.demo.model.CarBookingData;
 import com.carparkspring.demo.model.DTO.CarBookingRequest;
 import com.carparkspring.demo.model.Parking;
+import com.carparkspring.demo.model.ParkingSlot;
 import com.carparkspring.demo.repository.CarBookingDataRepository;
 import com.carparkspring.demo.repository.ParkingRepository;
+import com.carparkspring.demo.repository.ParkingSlotRepository;
 import com.carparkspring.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class CarBookingDataService {
 
     @Autowired
     private UserRepository appUserRepository;
+    @Autowired
+    private ParkingSlotRepository parkingSlotRepository;
+
     public List<CarBookingData> getAllBookings() {
         return carBookingDataRepository.findAll();
     }
@@ -30,44 +35,22 @@ public class CarBookingDataService {
         return carBookingDataRepository.findById(id).orElse(null);
     }
 
-    public CarBookingData saveBooking(CarBookingData carBookingData) {
-        // Ensure parking is saved
-        Parking parking = carBookingData.getParking();
-        if (parking != null && parking.getId() == null) {
-            parking = parkingRepository.save(parking);
-            carBookingData.setParking(parking);
-        }
+    public CarBookingData saveBooking(CarBookingRequest carBookingRequest) {
+        ParkingSlot parkingSlot = parkingSlotRepository.findById(carBookingRequest.getParkingId()).orElse(null);
+        AppUser appUser = appUserRepository.findById(carBookingRequest.getUserId()).orElse(null);
 
-        // Ensure appUser is saved
-        AppUser appUser = carBookingData.getAppUser();
-        if (appUser != null && appUser.getId() == null) {
-            appUser = appUserRepository.save(appUser);
-            carBookingData.setAppUser(appUser);
-        }
-
-        return carBookingDataRepository.save(carBookingData);
-    }
-    public CarBookingData bookCar(CarBookingRequest carBookingRequest) {
-        // Retrieve Parking
-        Parking parking = parkingRepository.findById(carBookingRequest.getParkingId())
-                .orElseThrow(() -> new RuntimeException("Parking not found"));
-
-        // Retrieve AppUser
-        AppUser appUser = appUserRepository.findById(carBookingRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Create CarBookingData
         CarBookingData carBookingData = new CarBookingData();
         carBookingData.setCarModel(carBookingRequest.getCarModel());
         carBookingData.setStartTime(carBookingRequest.getStartTime());
         carBookingData.setEndTime(carBookingRequest.getEndTime());
         carBookingData.setLpnumber(carBookingRequest.getLpnumber());
         carBookingData.setMiscFacilities(carBookingRequest.getMiscFacilities());
-        carBookingData.setParking(parking);
+        carBookingData.setParkingSlot(parkingSlot);
         carBookingData.setAppUser(appUser);
 
-        return saveBooking(carBookingData);
+        return carBookingDataRepository.save(carBookingData);
     }
+
     public void deleteBooking(Long id) {
         carBookingDataRepository.deleteById(id);
     }
