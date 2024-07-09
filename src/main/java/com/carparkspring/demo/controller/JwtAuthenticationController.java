@@ -44,6 +44,13 @@ public class JwtAuthenticationController {
     public String userProfile() {
         return "Welcome to User Profile";
     }
+
+    // Log out
+    @GetMapping("/logout")
+    public String logout() {
+        return "Logged out";
+    }
+
     @GetMapping("/admin/adminProfile")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String adminProfile() {
