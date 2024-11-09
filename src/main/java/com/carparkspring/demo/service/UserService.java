@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class MyUserDetailsService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -30,5 +30,9 @@ public class MyUserDetailsService implements UserDetailsService {
         authorities.add(new SimpleGrantedAuthority("ROLE_" + appUser.getRole()));
 
         return new org.springframework.security.core.userdetails.User(appUser.getUsername(), appUser.getPassword(), authorities);
+    }
+
+    public String addUser(AppUser userInfo) {
+        return null;
     }
 }

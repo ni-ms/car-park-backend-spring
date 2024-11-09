@@ -1,10 +1,9 @@
 package com.carparkspring.demo.controller;
 
-import com.carparkspring.demo.model.AppAdmin;
 import com.carparkspring.demo.model.AppUser;
 import com.carparkspring.demo.model.DTO.AuthenticationRequest;
 import com.carparkspring.demo.service.JwtService;
-import com.carparkspring.demo.service.MyUserDetailsService;
+import com.carparkspring.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +24,7 @@ public class JwtAuthenticationController {
     private JwtService jwtService;
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private UserService userDetailsService;
 
     @PostMapping("/addNewUser")
     public String addNewUser(@RequestBody AppUser userInfo) {
