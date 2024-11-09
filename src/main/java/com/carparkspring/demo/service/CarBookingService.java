@@ -3,7 +3,6 @@ package com.carparkspring.demo.service;
 import com.carparkspring.demo.model.AppUser;
 import com.carparkspring.demo.model.CarBookingData;
 import com.carparkspring.demo.model.DTO.CarBookingRequest;
-import com.carparkspring.demo.model.Parking;
 import com.carparkspring.demo.model.ParkingSlot;
 import com.carparkspring.demo.repository.CarBookingDataRepository;
 import com.carparkspring.demo.repository.ParkingRepository;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CarBookingDataService {
+public class CarBookingService {
 
     @Autowired
     private CarBookingDataRepository carBookingDataRepository;

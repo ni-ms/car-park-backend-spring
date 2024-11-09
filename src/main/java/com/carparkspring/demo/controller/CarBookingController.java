@@ -2,7 +2,7 @@ package com.carparkspring.demo.controller;
 
 import com.carparkspring.demo.model.CarBookingData;
 import com.carparkspring.demo.model.DTO.CarBookingRequest;
-import com.carparkspring.demo.service.CarBookingDataService;
+import com.carparkspring.demo.service.CarBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/carBooking")
 public class CarBookingController {
     @Autowired
-    private CarBookingDataService carBookingDataService;
+    private CarBookingService carBookingDataService;
 
     @PostMapping("/addBooking")
     @PreAuthorize("hasAuthority('ROLE_USER')")
