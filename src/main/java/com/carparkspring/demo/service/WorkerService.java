@@ -1,4 +1,4 @@
 package com.carparkspring.demo.service;
 
-public class WorkerDataService {
+public class WorkerService {
 }

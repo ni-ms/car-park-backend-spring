@@ -1,7 +1,7 @@
 package com.carparkspring.demo.config;
 
 import com.carparkspring.demo.filter.JwtAuthFilter;
-import com.carparkspring.demo.service.MyUserDetailsService;
+import com.carparkspring.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +28,8 @@ public class SecurityConfig {
 
     // User Creation
     @Bean
-    public MyUserDetailsService userDetailsService() {
-        return new MyUserDetailsService();
+    public UserService userDetailsService() {
+        return new UserService();
     }
 
     // Configuring HttpSecurity

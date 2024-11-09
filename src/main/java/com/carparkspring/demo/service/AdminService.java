@@ -9,11 +9,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class MyAdminDetails implements UserDetails {
+public class AdminService implements UserDetails {
 
     private AppAdmin appAdmin;
 
-    public MyAdminDetails(AppAdmin appAdmin) {
+    public AdminService(AppAdmin appAdmin) {
         this.appAdmin = appAdmin;
     }
 
