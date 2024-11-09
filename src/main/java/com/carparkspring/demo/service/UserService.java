@@ -12,9 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -44,10 +42,6 @@ public class UserService implements UserDetailsService {
 
     public Optional<AppUser> getUserById(Long id) {
         return userRepository.findById(id);
-    }
-
-    public AppUser saveUser(AppUser appUser) {
-        return userRepository.save(appUser);
     }
 
     public void deleteUser(Long id) {
@@ -83,5 +77,30 @@ public class UserService implements UserDetailsService {
             appUser.setPassword(newPassword);
             userRepository.save(appUser);
         }
+    }
+
+    public Map<String, Object> getUserDetails(Long userId) {
+        AppUserData appUserData = appUserDataRepository.findByAppUserId(userId);
+        if (appUserData == null) {
+            return null;
+        }
+
+        Map<String, Object> userDetails = new HashMap<>();
+        userDetails.put("residentialAddress", appUserData.getResidentialAddress());
+        userDetails.put("emailId", appUserData.getEmailId());
+        userDetails.put("mobileNumber", appUserData.getMobileNumber());
+        userDetails.put("carRegistrationNumber", appUserData.getCarRegistrationNumber());
+        userDetails.put("carModel", appUserData.getCarModel());
+        userDetails.put("accountBalance", appUserData.getAccountBalance());
+        userDetails.put("discountPercentage", appUserData.getDiscountPercentage());
+        userDetails.put("isWaitlisted", appUserData.isWaitlisted());
+
+        return userDetails;
+    }
+
+    public String addUser(AppUser appUser) {
+        appUser.setRole("USER");
+        userRepository.save(appUser);
+        return "User added successfully";
     }
 }
