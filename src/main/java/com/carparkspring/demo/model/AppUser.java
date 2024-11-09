@@ -18,7 +18,7 @@ public class AppUser {
     private String username;
     private String password;
     private String emailId;
-    private String roles;
+    private String role;
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
     private AppUserData appUserData;

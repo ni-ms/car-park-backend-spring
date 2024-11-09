@@ -37,9 +37,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Fix the permit all configuration. Remove h2-console from permit all
         return http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/h2-console/**", "/carBookingData/**", "/parking/**").permitAll())
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/user/**").authenticated())
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/admin/**").authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/carBookingData/**", "/parking/**").permitAll()
+                        .requestMatchers("/auth/user/**").hasRole("USER")
+                        .requestMatchers("/auth/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/auth/worker/**").hasRole("WORKER")
+                        .anyRequest().authenticated()
+                )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
@@ -64,6 +68,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
 }
