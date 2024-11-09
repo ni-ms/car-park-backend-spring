@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
@@ -42,5 +44,8 @@ public class CarBookingData {
     private WorkerData worker;
 
     @ElementCollection
-    private List<String> tasks;
+    @CollectionTable(name = "car_booking_tasks", joinColumns = @JoinColumn(name = "car_booking_id"))
+    @MapKeyColumn(name = "task_name")
+    @Column(name = "task_status")
+    private Map<String, String> tasks = new HashMap<>();
 }
