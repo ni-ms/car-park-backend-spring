@@ -48,4 +48,5 @@ public class CarBookingData {
     @MapKeyColumn(name = "task_name")
     @Column(name = "task_status")
     private Map<String, String> tasks = new HashMap<>();
+
 }
