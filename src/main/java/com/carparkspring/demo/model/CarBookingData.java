@@ -33,4 +33,14 @@ public class CarBookingData {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private AppUser appUser;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    private PaymentData paymentData;
+
+    @ManyToOne
+    @JoinColumn(name = "worker_id", referencedColumnName = "id")
+    private WorkerData worker;
+
+    @ElementCollection
+    private List<String> tasks;
 }
