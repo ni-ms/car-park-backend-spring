@@ -36,7 +36,7 @@ public class WorkerData {
     @JsonIgnore
     private Parking parking;
 
-    private String shift; // ADD: MORNING, AFTERNOON, NIGHT
+    private String shift; 
 
     @Column(columnDefinition = "boolean default false")
     private boolean onDuty = false;

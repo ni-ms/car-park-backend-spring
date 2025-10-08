@@ -43,7 +43,7 @@ public class WorkerTask {
 
     private BigDecimal taskPrice;
 
-    private String notes; // Any special instructions or notes
+    private String notes; 
 
     private LocalDateTime assignedAt;
 
@@ -59,7 +59,7 @@ public class WorkerTask {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Task Types Enum
+    
     public enum TaskType {
         CAR_WASH("Car Wash", 15.0),
         INTERIOR_CLEANING("Interior Cleaning", 20.0),
@@ -89,7 +89,7 @@ public class WorkerTask {
         }
     }
 
-    // Task Status Enum
+    
     public enum TaskStatus {
         PENDING,
         ASSIGNED,

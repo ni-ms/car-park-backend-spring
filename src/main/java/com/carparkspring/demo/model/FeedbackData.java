@@ -32,7 +32,7 @@ public class FeedbackData {
     private CarBookingData booking;
 
     @Column(nullable = false)
-    private int rating; // 1-5
+    private int rating;
 
     @Column(length = 1000)
     private String comments;

@@ -36,13 +36,11 @@ public class JwtAuthenticationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ===========================================
-    // PUBLIC REGISTRATION (Regular Users)
-    // ===========================================
+
     @PostMapping("/register")
     @Operation(summary = "Register as USER", description = "Public registration for regular users")
     public AuthenticationResponse register(@RequestBody AppUser userInfo) {
-        // Force USER role for public registration
+
         userInfo.setRole("USER");
 
         if (userInfo.getAppUserData() != null) {
@@ -55,9 +53,7 @@ public class JwtAuthenticationController {
         return new AuthenticationResponse(token, userInfo.getEmailId(), "USER");
     }
 
-    // ===========================================
-    // ADMIN REGISTRATION (Admin Only)
-    // ===========================================
+
     @PostMapping("/register/admin")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Register admin", description = "Admin creates another admin")
@@ -74,14 +70,12 @@ public class JwtAuthenticationController {
         return new AuthenticationResponse(token, adminInfo.getEmailId(), "ADMIN");
     }
 
-    // ===========================================
-    // WORKER REGISTRATION (Admin Only)
-    // ===========================================
+
     @PostMapping("/register/worker")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Register worker", description = "Admin creates a worker with work details")
     public AuthenticationResponse registerWorker(@RequestBody WorkerRegistrationRequest request) {
-        // Create AppUser with WORKER role
+
         AppUser workerUser = request.getUserInfo();
         workerUser.setRole("WORKER");
 
@@ -89,7 +83,7 @@ public class JwtAuthenticationController {
             workerUser.getAppUserData().setAppUser(workerUser);
         }
 
-        // Create WorkerData
+
         WorkerData workerData = request.getWorkerData();
         workerData.setAppUser(workerUser);
         workerUser.setWorkerData(workerData);
@@ -100,9 +94,7 @@ public class JwtAuthenticationController {
         return new AuthenticationResponse(token, workerUser.getEmailId(), "WORKER");
     }
 
-    // ===========================================
-    // LOGIN (Everyone)
-    // ===========================================
+
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Login for all user types")
     public AuthenticationResponse login(@RequestBody AuthenticationRequest authRequest) {
@@ -123,9 +115,7 @@ public class JwtAuthenticationController {
         return new AuthenticationResponse(token, user.getEmailId(), user.getRole());
     }
 
-    // ===========================================
-    // PROFILE
-    // ===========================================
+
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get profile", description = "Get current user's profile")
@@ -133,9 +123,7 @@ public class JwtAuthenticationController {
         return userService.getUserByEmail(authentication.getName());
     }
 
-    // ===========================================
-    // CHANGE PASSWORD
-    // ===========================================
+
     @PutMapping("/change-password")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Change password", description = "Change current user's password")
@@ -154,9 +142,7 @@ public class JwtAuthenticationController {
         return "Password changed successfully";
     }
 
-    // ===========================================
-    // ROLE-SPECIFIC DASHBOARDS
-    // ===========================================
+
     @GetMapping("/dashboard/user")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @Operation(summary = "User dashboard")
@@ -178,21 +164,17 @@ public class JwtAuthenticationController {
         return "Welcome to Worker Dashboard";
     }
 
-    // ===========================================
-    // LOGOUT
-    // ===========================================
+
     @PostMapping("/logout")
     @Operation(summary = "Logout")
     public String logout() {
         return "Logged out successfully. Please discard your token.";
     }
 
-    // ===========================================
-    // DTO for Worker Registration
-    // ===========================================
+
     @Data
     public static class WorkerRegistrationRequest {
-        private AppUser userInfo;     // username, email, password, appUserData
-        private WorkerData workerData; // position, shift, parking
+        private AppUser userInfo;
+        private WorkerData workerData;
     }
 }

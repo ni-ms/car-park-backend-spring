@@ -21,8 +21,8 @@ public class AdminMetadata {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     @JsonIgnore
-    private AppUser appUser; // Link to AppUser with ROLE_ADMIN
+    private AppUser appUser; 
 
-    private String department; // e.g., "Operations", "IT", "Management"
-    private String jobTitle;   // e.g., "System Admin", "Super Admin"
+    private String department; 
+    private String jobTitle;   
 }

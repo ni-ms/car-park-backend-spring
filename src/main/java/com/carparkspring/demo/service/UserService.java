@@ -77,7 +77,7 @@ public class UserService implements UserDetailsService {
     public String addUser(AppUser appUser) {
         log.info("Adding new user: {}", appUser.getUsername());
 
-        // Check if user already exists
+
         if (userRepository.findByUsername(appUser.getUsername()) != null) {
             log.warn("User already exists: {}", appUser.getUsername());
             throw new RuntimeException("User already exists with username: " + appUser.getUsername());
@@ -88,20 +88,20 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Email already registered: " + appUser.getEmailId());
         }
 
-        // Encode password
+
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
 
-        // Set default role if not provided
+
         if (appUser.getRole() == null || appUser.getRole().isEmpty()) {
             appUser.setRole("USER");
         }
 
-        // Save user and associated data
+
         if (appUser.getAppUserData() != null) {
             appUser.getAppUserData().setAppUser(appUser);
         }
 
-        // Save worker data if present (for WORKER role)
+
         if (appUser.getWorkerData() != null) {
             appUser.getWorkerData().setAppUser(appUser);
         }

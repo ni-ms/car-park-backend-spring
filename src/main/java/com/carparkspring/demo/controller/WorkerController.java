@@ -19,9 +19,7 @@ public class WorkerController {
     @Autowired
     private WorkerService workerService;
 
-    // ===========================================
-    // GET ALL WORKERS (Admin Only)
-    // ===========================================
+
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Get all workers", description = "Get all workers in system")
@@ -29,9 +27,7 @@ public class WorkerController {
         return workerService.getAllWorkers();
     }
 
-    // ===========================================
-    // GET WORKER BY ID
-    // ===========================================
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
     @Operation(summary = "Get worker by ID")
@@ -40,9 +36,7 @@ public class WorkerController {
                 .orElseThrow(() -> new RuntimeException("Worker not found"));
     }
 
-    // ===========================================
-    // GET WORKERS BY PARKING
-    // ===========================================
+
     @GetMapping("/parking/{parkingId}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
     @Operation(summary = "Get workers by parking", description = "Get all workers assigned to a parking facility")
@@ -50,9 +44,7 @@ public class WorkerController {
         return workerService.getWorkersByParkingId(parkingId);
     }
 
-    // ===========================================
-    // ASSIGN WORKER TO PARKING (Admin Only)
-    // ===========================================
+
     @PutMapping("/{workerId}/assign-parking/{parkingId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Assign worker to parking", description = "Assign a worker to a parking facility")
@@ -60,9 +52,7 @@ public class WorkerController {
         return workerService.assignToParking(workerId, parkingId);
     }
 
-    // ===========================================
-    // UPDATE DUTY STATUS
-    // ===========================================
+
     @PutMapping("/{workerId}/duty-status")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
     @Operation(summary = "Update duty status", description = "Mark worker as on-duty or off-duty")
@@ -72,9 +62,7 @@ public class WorkerController {
                 .orElseThrow(() -> new RuntimeException("Worker not found"));
     }
 
-    // ===========================================
-    // UPDATE WORKER SHIFT (Admin Only)
-    // ===========================================
+
     @PutMapping("/{workerId}/shift")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Update worker shift", description = "Update worker's shift schedule")
@@ -82,9 +70,7 @@ public class WorkerController {
         return workerService.updateShift(workerId, shift);
     }
 
-    // ===========================================
-    // UPDATE WORKER POSITION (Admin Only)
-    // ===========================================
+
     @PutMapping("/{workerId}/position")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Update worker position", description = "Update worker's job position")
@@ -92,9 +78,7 @@ public class WorkerController {
         return workerService.updatePosition(workerId, position);
     }
 
-    // ===========================================
-    // GET WORKER DETAILS
-    // ===========================================
+
     @GetMapping("/{workerId}/details")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
     @Operation(summary = "Get worker details", description = "Get detailed worker information")
@@ -102,9 +86,7 @@ public class WorkerController {
         return workerService.getWorkerDetails(workerId);
     }
 
-    // ===========================================
-    // GET ON-DUTY WORKERS (Admin/Worker)
-    // ===========================================
+
     @GetMapping("/on-duty")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
     @Operation(summary = "Get on-duty workers", description = "Get all currently on-duty workers")

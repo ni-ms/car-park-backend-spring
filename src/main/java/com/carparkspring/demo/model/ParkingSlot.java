@@ -32,7 +32,7 @@ public class ParkingSlot {
     private String location;
 
     @Column(nullable = false)
-    private String type; // Regular, Handicap, Electric
+    private String type; 
 
     @Column(columnDefinition = "double default 0.0")
     private double hourlyRate;

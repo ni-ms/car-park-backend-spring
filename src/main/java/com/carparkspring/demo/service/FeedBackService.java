@@ -27,12 +27,12 @@ public class FeedBackService {
     public FeedbackData saveFeedback(FeedbackData feedback) {
         log.info("Saving feedback for booking: {}", feedback.getBooking().getId());
 
-        // Validate rating
+
         if (feedback.getRating() < 1 || feedback.getRating() > 5) {
             throw new RuntimeException("Rating must be between 1 and 5");
         }
 
-        // Validate booking exists and is completed
+
         CarBookingData booking = bookingRepository.findById(feedback.getBooking().getId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
