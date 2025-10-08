@@ -36,6 +36,7 @@ public class UserService implements UserDetailsService {
 
     private final Counter userRegistrationCounter;
 
+    @Autowired
     public UserService(MeterRegistry meterRegistry) {
         this.userRegistrationCounter = Counter.builder("users.registered")
                 .description("Total number of users registered")
@@ -91,6 +92,11 @@ public class UserService implements UserDetailsService {
             appUser.getAppUserData().setAppUser(appUser);
         }
 
+        // Save worker data if present (for WORKER role)
+        if (appUser.getWorkerData() != null) {
+            appUser.getWorkerData().setAppUser(appUser);
+        }
+
         userRepository.save(appUser);
         userRegistrationCounter.increment();
 
@@ -104,9 +110,20 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
+    public AppUser getUserByEmail(String emailId) {
+        log.debug("Fetching user by email: {}", emailId);
+        return userRepository.findByEmailId(emailId)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + emailId));
+    }
+
     public List<AppUser> getAllUsers() {
         log.debug("Fetching all users");
         return userRepository.findAll();
+    }
+
+    public List<AppUser> getUsersByRole(String role) {
+        log.debug("Fetching users by role: {}", role);
+        return userRepository.findByRole(role);
     }
 
     @Transactional
@@ -145,6 +162,11 @@ public class UserService implements UserDetailsService {
     @CacheEvict(value = "users", key = "#userId")
     public void updateUsername(Long userId, String newUsername) {
         log.info("Updating username for user: {}", userId);
+
+        AppUser existingUser = userRepository.findByUsername(newUsername);
+        if (existingUser != null && !existingUser.getId().equals(userId)) {
+            throw new RuntimeException("Username already taken: " + newUsername);
+        }
 
         Optional<AppUser> appUserOptional = userRepository.findById(userId);
         if (appUserOptional.isPresent()) {

@@ -37,8 +37,16 @@ public class AppUser {
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AppUserData appUserData;
 
+    // ADD THIS: Link to WorkerData (only populated if role = WORKER)
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private WorkerData workerData;
+
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<CarBookingData> carBookings;
+
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private AdminMetadata adminMetadata;
+
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

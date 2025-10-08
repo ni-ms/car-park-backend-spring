@@ -1,5 +1,6 @@
 package com.carparkspring.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,21 +23,26 @@ public class WorkerData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
+    @JsonIgnore
+    private AppUser appUser;
+
 
     private String position;
 
-    private String contactNumber;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parking_id")
+    @JsonIgnore
     private Parking parking;
+
+    private String shift; // ADD: MORNING, AFTERNOON, NIGHT
 
     @Column(columnDefinition = "boolean default false")
     private boolean onDuty = false;
 
     @OneToMany(mappedBy = "worker")
+    @JsonIgnore
     private List<CarBookingData> carBookings;
 
     @CreatedDate
@@ -50,4 +56,5 @@ public class WorkerData {
     @Version
     @Column(name = "version")
     private Long version;
+
 }

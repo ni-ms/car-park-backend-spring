@@ -1,10 +1,10 @@
 package com.carparkspring.demo.service;
 
+import com.carparkspring.demo.model.Parking;
 import com.carparkspring.demo.model.WorkerData;
-import com.carparkspring.demo.model.ParkingSlot;
 import com.carparkspring.demo.model.CarBookingData;
 import com.carparkspring.demo.repository.WorkerDataRepository;
-import com.carparkspring.demo.repository.ParkingSlotRepository;
+import com.carparkspring.demo.repository.ParkingRepository;
 import com.carparkspring.demo.repository.CarBookingDataRepository;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -28,13 +28,14 @@ public class WorkerService {
     private WorkerDataRepository workerDataRepository;
 
     @Autowired
-    private ParkingSlotRepository parkingSlotRepository;
+    private ParkingRepository parkingRepository;
 
     @Autowired
     private CarBookingDataRepository carBookingDataRepository;
 
     private final Counter workerCounter;
 
+    @Autowired
     public WorkerService(MeterRegistry meterRegistry) {
         this.workerCounter = Counter.builder("workers.created")
                 .description("Total number of workers created")
@@ -57,10 +58,20 @@ public class WorkerService {
         return workerDataRepository.findByParkingId(parkingId);
     }
 
+    public List<WorkerData> getOnDutyWorkers() {
+        log.debug("Fetching all on-duty workers");
+        return workerDataRepository.findByOnDutyTrue();
+    }
+
     @Transactional
     @CacheEvict(value = "worker", allEntries = true)
     public WorkerData saveWorker(WorkerData workerData) {
-        log.info("Saving worker: {}", workerData.getName());
+        String workerName = "Unknown";
+        if (workerData.getAppUser() != null && workerData.getAppUser().getUsername() != null) {
+            workerName = workerData.getAppUser().getUsername();
+        }
+
+        log.info("Saving worker: {}", workerName);
         WorkerData saved = workerDataRepository.save(workerData);
         workerCounter.increment();
         return saved;
@@ -91,31 +102,87 @@ public class WorkerService {
         workerDataRepository.save(worker);
     }
 
+    @Transactional
+    @CacheEvict(value = "worker", key = "#workerId")
+    public WorkerData assignToParking(Long workerId, Long parkingId) {
+        log.info("Assigning worker {} to parking {}", workerId, parkingId);
+
+        WorkerData worker = workerDataRepository.findById(workerId)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
+
+        Parking parking = parkingRepository.findById(parkingId)
+                .orElseThrow(() -> new RuntimeException("Parking not found"));
+
+        worker.setParking(parking);
+        return workerDataRepository.save(worker);
+    }
+
+    @Transactional
+    @CacheEvict(value = "worker", key = "#workerId")
+    public WorkerData updateShift(Long workerId, String shift) {
+        log.info("Updating shift for worker {}: {}", workerId, shift);
+
+        WorkerData worker = workerDataRepository.findById(workerId)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
+
+        worker.setShift(shift);
+        return workerDataRepository.save(worker);
+    }
+
+    @Transactional
+    @CacheEvict(value = "worker", key = "#workerId")
+    public WorkerData updatePosition(Long workerId, String position) {
+        log.info("Updating position for worker {}: {}", workerId, position);
+
+        WorkerData worker = workerDataRepository.findById(workerId)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
+
+        worker.setPosition(position);
+        return workerDataRepository.save(worker);
+    }
+
     @Cacheable(value = "workerDetails", key = "#workerId")
     public Map<String, Object> getWorkerDetails(Long workerId) {
         log.debug("Fetching worker details for worker: {}", workerId);
 
         Optional<WorkerData> workerDataOptional = workerDataRepository.findById(workerId);
-        if (!workerDataOptional.isPresent()) {
+        if (workerDataOptional.isEmpty()) {
             log.warn("Worker not found: {}", workerId);
             return null;
         }
 
         WorkerData workerData = workerDataOptional.get();
         Map<String, Object> workerDetails = new HashMap<>();
-        workerDetails.put("id", workerData.getId());
-        workerDetails.put("name", workerData.getName());
+
+        workerDetails.put("workerId", workerData.getId());
         workerDetails.put("position", workerData.getPosition());
-        workerDetails.put("contactNumber", workerData.getContactNumber());
+        workerDetails.put("shift", workerData.getShift());
         workerDetails.put("onDuty", workerData.isOnDuty());
 
+        // Get name and contact from linked AppUser
+        if (workerData.getAppUser() != null) {
+            workerDetails.put("username", workerData.getAppUser().getUsername());
+            workerDetails.put("email", workerData.getAppUser().getEmailId());
+            workerDetails.put("role", workerData.getAppUser().getRole());
+
+            // Get additional info from AppUserData
+            if (workerData.getAppUser().getAppUserData() != null) {
+                workerDetails.put("firstName", workerData.getAppUser().getAppUserData().getFirstName());
+                workerDetails.put("lastName", workerData.getAppUser().getAppUserData().getLastName());
+                workerDetails.put("mobileNumber", workerData.getAppUser().getAppUserData().getMobileNumber());
+            }
+        }
+
+        // Get parking assignment
         if (workerData.getParking() != null) {
             workerDetails.put("parkingId", workerData.getParking().getId());
             workerDetails.put("parkingName", workerData.getParking().getName());
+            workerDetails.put("parkingLocation", workerData.getParking().getLocation());
         }
 
+        // Get assigned bookings count
         List<CarBookingData> assignedBookings = workerData.getCarBookings();
-        workerDetails.put("totalAssignedBookings", assignedBookings.size());
+        workerDetails.put("totalAssignedBookings", assignedBookings != null ? assignedBookings.size() : 0);
 
         return workerDetails;
     }
