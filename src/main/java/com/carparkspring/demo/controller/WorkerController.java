@@ -10,71 +10,105 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/worker")
-@Tag(name = "Worker", description = "Worker management APIs")
+@Tag(name = "Worker Operations", description = "Worker scheduling and assignment (NOT registration)")
 public class WorkerController {
 
     @Autowired
     private WorkerService workerService;
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
-    @Operation(summary = "Get worker by ID", description = "Retrieve a specific worker by ID")
-    public Optional<WorkerData> getWorkerById(@PathVariable Long id) {
-        return workerService.getWorkerById(id);
-    }
-
+    // ===========================================
+    // GET ALL WORKERS (Admin Only)
+    // ===========================================
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @Operation(summary = "Get all workers", description = "Retrieve all workers")
+    @Operation(summary = "Get all workers", description = "Get all workers in system")
     public List<WorkerData> getAllWorkers() {
         return workerService.getAllWorkers();
     }
 
+    // ===========================================
+    // GET WORKER BY ID
+    // ===========================================
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
+    @Operation(summary = "Get worker by ID")
+    public WorkerData getWorkerById(@PathVariable Long id) {
+        return workerService.getWorkerById(id)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
+    }
+
+    // ===========================================
+    // GET WORKERS BY PARKING
+    // ===========================================
     @GetMapping("/parking/{parkingId}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
-    @Operation(summary = "Get workers by parking", description = "Get all workers assigned to a specific parking facility")
-    public List<WorkerData> getWorkersByParkingId(@PathVariable Long parkingId) {
+    @Operation(summary = "Get workers by parking", description = "Get all workers assigned to a parking facility")
+    public List<WorkerData> getWorkersByParking(@PathVariable Long parkingId) {
         return workerService.getWorkersByParkingId(parkingId);
     }
 
-    @PostMapping("/create")
+    // ===========================================
+    // ASSIGN WORKER TO PARKING (Admin Only)
+    // ===========================================
+    @PutMapping("/{workerId}/assign-parking/{parkingId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @Operation(summary = "Create worker", description = "Create a new worker")
-    public WorkerData createWorker(@RequestBody WorkerData worker) {
-        return workerService.saveWorker(worker);
+    @Operation(summary = "Assign worker to parking", description = "Assign a worker to a parking facility")
+    public WorkerData assignWorkerToParking(@PathVariable Long workerId, @PathVariable Long parkingId) {
+        return workerService.assignToParking(workerId, parkingId);
     }
 
-    @PutMapping("/update")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @Operation(summary = "Update worker", description = "Update an existing worker")
-    public WorkerData updateWorker(@RequestBody WorkerData worker) {
-        return workerService.saveWorker(worker);
-    }
-
-    @PutMapping("/{id}/status")
+    // ===========================================
+    // UPDATE DUTY STATUS
+    // ===========================================
+    @PutMapping("/{workerId}/duty-status")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
-    @Operation(summary = "Update worker duty status", description = "Update worker on-duty status")
-    public String updateWorkerStatus(@PathVariable Long id, @RequestParam boolean onDuty) {
-        workerService.updateWorkerStatus(id, onDuty);
-        return "Worker status updated successfully";
+    @Operation(summary = "Update duty status", description = "Mark worker as on-duty or off-duty")
+    public WorkerData updateDutyStatus(@PathVariable Long workerId, @RequestParam boolean onDuty) {
+        workerService.updateWorkerStatus(workerId, onDuty);
+        return workerService.getWorkerById(workerId)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
     }
 
-    @DeleteMapping("/{id}")
+    // ===========================================
+    // UPDATE WORKER SHIFT (Admin Only)
+    // ===========================================
+    @PutMapping("/{workerId}/shift")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @Operation(summary = "Delete worker", description = "Delete a worker")
-    public String deleteWorker(@PathVariable Long id) {
-        workerService.deleteWorker(id);
-        return "Worker deleted successfully";
+    @Operation(summary = "Update worker shift", description = "Update worker's shift schedule")
+    public WorkerData updateShift(@PathVariable Long workerId, @RequestParam String shift) {
+        return workerService.updateShift(workerId, shift);
     }
 
-    @GetMapping("/{id}/details")
+    // ===========================================
+    // UPDATE WORKER POSITION (Admin Only)
+    // ===========================================
+    @PutMapping("/{workerId}/position")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Update worker position", description = "Update worker's job position")
+    public WorkerData updatePosition(@PathVariable Long workerId, @RequestParam String position) {
+        return workerService.updatePosition(workerId, position);
+    }
+
+    // ===========================================
+    // GET WORKER DETAILS
+    // ===========================================
+    @GetMapping("/{workerId}/details")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
-    @Operation(summary = "Get worker details", description = "Get detailed information about a worker")
-    public Map<String, Object> getWorkerDetails(@PathVariable Long id) {
-        return workerService.getWorkerDetails(id);
+    @Operation(summary = "Get worker details", description = "Get detailed worker information")
+    public Map<String, Object> getWorkerDetails(@PathVariable Long workerId) {
+        return workerService.getWorkerDetails(workerId);
+    }
+
+    // ===========================================
+    // GET ON-DUTY WORKERS (Admin/Worker)
+    // ===========================================
+    @GetMapping("/on-duty")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_WORKER')")
+    @Operation(summary = "Get on-duty workers", description = "Get all currently on-duty workers")
+    public List<WorkerData> getOnDutyWorkers() {
+        return workerService.getOnDutyWorkers();
     }
 }
