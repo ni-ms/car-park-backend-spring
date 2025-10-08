@@ -44,13 +44,21 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.debug("Loading user by username: {}", username);
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        log.debug("Loading user by username or email: {}", usernameOrEmail);
 
-        AppUser appUser = userRepository.findByUsername(username);
+        AppUser appUser;
+
+
+        appUser = userRepository.findByUsername(usernameOrEmail);
+
         if (appUser == null) {
-            log.warn("User not found: {}", username);
-            throw new UsernameNotFoundException("User not found: " + username);
+            appUser = userRepository.findByEmailId(usernameOrEmail).orElse(null);
+        }
+
+        if (appUser == null) {
+            log.warn("User not found: {}", usernameOrEmail);
+            throw new UsernameNotFoundException("User not found: " + usernameOrEmail);
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -62,6 +70,7 @@ public class UserService implements UserDetailsService {
                 authorities
         );
     }
+
 
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
@@ -110,11 +119,18 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public AppUser getUserByEmail(String emailId) {
-        log.debug("Fetching user by email: {}", emailId);
-        return userRepository.findByEmailId(emailId)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + emailId));
+    public AppUser getUserByEmail(String usernameOrEmail) {
+        log.debug("Fetching user by username or email: {}", usernameOrEmail);
+
+        AppUser user = userRepository.findByUsername(usernameOrEmail);
+        if (user != null) {
+            return user;
+        }
+
+        return userRepository.findByEmailId(usernameOrEmail)
+                .orElseThrow(() -> new RuntimeException("User not found: " + usernameOrEmail));
     }
+
 
     public List<AppUser> getAllUsers() {
         log.debug("Fetching all users");
