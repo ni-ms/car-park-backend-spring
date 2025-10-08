@@ -26,22 +26,21 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthFilter authFilter;
 
-    // User Creation
+
     @Autowired
-    private UserService userService; // Let Spring inject it
+    private UserService userService;
 
 
-    // Configuring HttpSecurity
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Fix the permit all configuration. Remove h2-console from permit all
+
         return http.csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/register",           // ADD THIS
-                                "/auth/login",              // ADD THIS
-                                "/auth/generateToken",      // Keep this for backward compatibility
+                                "/auth/register",
+                                "/auth/login",
+                                "/auth/generateToken",
                                 "/auth/welcome",
                                 "/auth/addNewUser",
                                 "/carBookingData/**",
@@ -51,11 +50,11 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
-                                "/h2-console/**"            // ADD THIS for H2 console
+                                "/h2-console/**"
                         ).permitAll()
-                        .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")   // Change hasRole to hasAuthority
-                        .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN") // Change hasRole to hasAuthority
-                        .requestMatchers("/auth/worker/**").hasAuthority("ROLE_WORKER") // Change hasRole to hasAuthority
+                        .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/auth/worker/**").hasAuthority("ROLE_WORKER")
 
                         .anyRequest().authenticated()
                 )
@@ -65,7 +64,7 @@ public class SecurityConfig {
                 .build();
     }
 
-    // Password Encoding
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -74,7 +73,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userService); // Use injected service
+        authenticationProvider.setUserDetailsService(userService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }

@@ -37,7 +37,7 @@ public class AppUser {
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AppUserData appUserData;
 
-    // ADD THIS: Link to WorkerData (only populated if role = WORKER)
+    
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private WorkerData workerData;
 

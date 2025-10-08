@@ -159,13 +159,13 @@ public class WorkerService {
         workerDetails.put("shift", workerData.getShift());
         workerDetails.put("onDuty", workerData.isOnDuty());
 
-        // Get name and contact from linked AppUser
+        
         if (workerData.getAppUser() != null) {
             workerDetails.put("username", workerData.getAppUser().getUsername());
             workerDetails.put("email", workerData.getAppUser().getEmailId());
             workerDetails.put("role", workerData.getAppUser().getRole());
 
-            // Get additional info from AppUserData
+            
             if (workerData.getAppUser().getAppUserData() != null) {
                 workerDetails.put("firstName", workerData.getAppUser().getAppUserData().getFirstName());
                 workerDetails.put("lastName", workerData.getAppUser().getAppUserData().getLastName());
@@ -173,14 +173,14 @@ public class WorkerService {
             }
         }
 
-        // Get parking assignment
+        
         if (workerData.getParking() != null) {
             workerDetails.put("parkingId", workerData.getParking().getId());
             workerDetails.put("parkingName", workerData.getParking().getName());
             workerDetails.put("parkingLocation", workerData.getParking().getLocation());
         }
 
-        // Get assigned bookings count
+        
         List<CarBookingData> assignedBookings = workerData.getCarBookings();
         workerDetails.put("totalAssignedBookings", assignedBookings != null ? assignedBookings.size() : 0);
 

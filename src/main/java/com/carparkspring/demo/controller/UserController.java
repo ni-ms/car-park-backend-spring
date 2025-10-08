@@ -22,9 +22,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // ===========================================
-    // GET ALL USERS (Admin Only)
-    // ===========================================
+
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Get all users", description = "Retrieve all users (Admin only)")
@@ -32,9 +30,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    // ===========================================
-    // GET USER BY ID
-    // ===========================================
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get user by ID")
@@ -42,9 +38,7 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    // ===========================================
-    // GET CURRENT USER'S INFO
-    // ===========================================
+
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get my info", description = "Get current user's information")
@@ -52,9 +46,7 @@ public class UserController {
         return userService.getUserByEmail(authentication.getName());
     }
 
-    // ===========================================
-    // GET USER DETAILS
-    // ===========================================
+
     @GetMapping("/{id}/details")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get user details")
@@ -62,9 +54,7 @@ public class UserController {
         return userService.getUserDetails(id);
     }
 
-    // ===========================================
-    // GET USER DATA (Profile)
-    // ===========================================
+
     @GetMapping("/{id}/data")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get user profile data")
@@ -72,9 +62,7 @@ public class UserController {
         return userService.getUserData(id);
     }
 
-    // ===========================================
-    // GET ACCOUNT BALANCE
-    // ===========================================
+
     @GetMapping("/{id}/balance")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get account balance")
@@ -82,9 +70,7 @@ public class UserController {
         return userService.getAccountBalance(id);
     }
 
-    // ===========================================
-    // UPDATE USERNAME
-    // ===========================================
+
     @PutMapping("/{id}/username")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Update username")
@@ -93,9 +79,7 @@ public class UserController {
         return "Username updated successfully";
     }
 
-    // ===========================================
-    // UPDATE USER DATA
-    // ===========================================
+
     @PutMapping("/{id}/data")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Update user profile data")
@@ -103,9 +87,7 @@ public class UserController {
         return userService.saveUserData(userData);
     }
 
-    // ===========================================
-    // DELETE USER (Admin Only)
-    // ===========================================
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Delete user", description = "Delete a user (Admin only)")
@@ -114,9 +96,7 @@ public class UserController {
         return "User deleted successfully";
     }
 
-    // ===========================================
-    // GET USERS BY ROLE (Admin Only)
-    // ===========================================
+
     @GetMapping("/role/{role}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "Get users by role", description = "Get all users with specific role")

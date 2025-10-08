@@ -43,7 +43,7 @@ public class PaymentService {
     public PaymentData processPayment(PaymentData payment) {
         log.info("Processing payment for booking: {}", payment.getBooking().getId());
 
-        // Validate booking exists and is confirmed
+
         CarBookingData booking = bookingRepository.findById(payment.getBooking().getId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
@@ -51,7 +51,7 @@ public class PaymentService {
             throw new RuntimeException("Booking is not in confirmed status");
         }
 
-        // Generate transaction ID
+
         payment.setTransactionId(UUID.randomUUID().toString());
         payment.setPaymentDateTime(LocalDateTime.now());
         payment.setStatus(PaymentData.PaymentStatus.PROCESSING);
@@ -59,8 +59,7 @@ public class PaymentService {
         PaymentData savedPayment = paymentDataRepository.save(payment);
 
         try {
-            // Simulate payment processing
-            // In real scenario, integrate with payment gateway
+
 
             savedPayment.setStatus(PaymentData.PaymentStatus.COMPLETED);
             booking.setStatus(CarBookingData.BookingStatus.ACTIVE);

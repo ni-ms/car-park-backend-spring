@@ -32,28 +32,28 @@ public class DefaultAdminInitializer implements CommandLineRunner {
             return;
         }
 
-        // Check if default admin already exists
+
         if (userRepository.existsByUsername(adminProperties.getUsername())) {
             log.info("Default admin user '{}' already exists, skipping creation",
                     adminProperties.getUsername());
             return;
         }
 
-        // Check if email already exists
+
         if (userRepository.existsByEmailId(adminProperties.getEmail())) {
             log.warn("Email '{}' already exists, skipping default admin creation",
                     adminProperties.getEmail());
             return;
         }
 
-        // Create default admin user
+
         AppUser adminUser = new AppUser();
         adminUser.setUsername(adminProperties.getUsername());
         adminUser.setPassword(passwordEncoder.encode(adminProperties.getPassword()));
         adminUser.setEmailId(adminProperties.getEmail());
         adminUser.setRole("ADMIN");
 
-        // Create admin user data
+
         AppUserData adminData = new AppUserData();
         adminData.setFirstName(adminProperties.getFirstName());
         adminData.setLastName(adminProperties.getLastName());
@@ -63,7 +63,7 @@ public class DefaultAdminInitializer implements CommandLineRunner {
 
         adminUser.setAppUserData(adminData);
 
-        // Save admin user
+
         userRepository.save(adminUser);
 
         log.info("===========================================");

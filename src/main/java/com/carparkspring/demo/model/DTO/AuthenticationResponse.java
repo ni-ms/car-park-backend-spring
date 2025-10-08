@@ -13,7 +13,7 @@ public class AuthenticationResponse {
     private String role;
     private String message;
 
-    // Constructor without message
+    
     public AuthenticationResponse(String token, String emailId, String role) {
         this.token = token;
         this.emailId = emailId;

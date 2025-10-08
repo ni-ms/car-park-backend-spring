@@ -96,7 +96,7 @@ public class CarBookingService {
             log.info("Creating booking - User: {}, Slot: {}",
                     carBookingRequest.getUserId(), carBookingRequest.getParkingId());
 
-            // Validate time range
+            
             if (carBookingRequest.getEndTime().isBefore(carBookingRequest.getStartTime())) {
                 throw new RuntimeException("End time must be after start time");
             }
@@ -105,20 +105,20 @@ public class CarBookingService {
                 throw new RuntimeException("Start time cannot be in the past");
             }
 
-            // Get slot with optimistic locking
+            
             ParkingSlot parkingSlot = (ParkingSlot) parkingSlotRepository.findByIdWithLock(carBookingRequest.getParkingId())
                     .orElseThrow(() -> new RuntimeException("Parking slot not found"));
 
             AppUser appUser = appUserRepository.findById(carBookingRequest.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // Check if slot is available
+            
             if (!parkingSlot.isSpaceActive() ||
                     parkingSlot.getSlotStatus() == ParkingSlot.SlotStatus.MAINTENANCE) {
                 throw new RuntimeException("Parking slot is not available");
             }
 
-            // Check for conflicting bookings
+            
             List<CarBookingData> conflicts = carBookingDataRepository.findConflictingBookings(
                     carBookingRequest.getParkingId(),
                     carBookingRequest.getStartTime(),
@@ -130,7 +130,7 @@ public class CarBookingService {
                 throw new RuntimeException("Slot is already booked for the requested time");
             }
 
-            // Create booking
+            
             CarBookingData carBookingData = new CarBookingData();
             carBookingData.setCarModel(carBookingRequest.getCarModel());
             carBookingData.setStartTime(carBookingRequest.getStartTime());
@@ -141,13 +141,13 @@ public class CarBookingService {
             carBookingData.setAppUser(appUser);
             carBookingData.setStatus(CarBookingData.BookingStatus.CONFIRMED);
 
-            // Update slot status
+            
             parkingSlot.setSlotStatus(ParkingSlot.SlotStatus.RESERVED);
             parkingSlotRepository.save(parkingSlot);
 
             CarBookingData savedBooking = carBookingDataRepository.save(carBookingData);
 
-            // Send WebSocket notifications
+            
             if (messagingTemplate != null) {
                 messagingTemplate.convertAndSend("/topic/bookings", savedBooking);
                 messagingTemplate.convertAndSend("/topic/occupancy/" + parkingSlot.getParking().getId(),
@@ -177,7 +177,7 @@ public class CarBookingService {
 
         carBookingDataRepository.save(booking);
 
-        // Send WebSocket notification
+        
         if (messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/occupancy/" + slot.getParking().getId(),
                     getOccupancyUpdate(slot.getParking().getId()));
@@ -192,7 +192,7 @@ public class CarBookingService {
 
         CarBookingData booking = getBookingById(bookingId);
         long hours = ChronoUnit.HOURS.between(booking.getStartTime(), booking.getEndTime());
-        if (hours == 0) hours = 1; // Minimum 1 hour
+        if (hours == 0) hours = 1; 
 
         double hourlyRate = booking.getParkingSlot().getHourlyRate();
         double discount = 0.0;
