@@ -1,12 +1,9 @@
 package com.carparkspring.demo.repository;
 
-import com.carparkspring.demo.model.AppUser;
-import com.carparkspring.demo.model.CarBookingData;
 import com.carparkspring.demo.model.PaymentData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.lang.ScopedValue;
 import java.util.List;
 import java.util.Optional;
 

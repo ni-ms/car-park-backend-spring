@@ -10,3 +10,5 @@ logging.level.com.zaxxer.hikari=DEBUG
 
 ```
 ## Run the DemoApplication.java file to run the spring app
+
+http://localhost:8080/swagger-ui/index.html

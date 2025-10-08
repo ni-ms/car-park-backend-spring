@@ -37,7 +37,7 @@ public class SecurityConfig {
         // Fix the permit all configuration. Remove h2-console from permit all
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/carBookingData/**", "/parking/**", "/ws/**", "/actuator/**").permitAll()
+                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/carBookingData/**", "/parking/**", "/ws/**", "/actuator/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/auth/user/**").hasRole("USER")
                         .requestMatchers("/auth/admin/**").hasRole("ADMIN")
                         .requestMatchers("/auth/worker/**").hasRole("WORKER")

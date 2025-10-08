@@ -10,7 +10,8 @@ import java.util.List;
 public interface FeedbackDataRepository extends JpaRepository<FeedbackData, Long> {
     List<FeedbackData> findByBooking_ParkingSlot_Parking_Id(Long parkingId);
 
-    List<FeedbackData> findByUserFeedbackId(Long userId);
 
-    List<FeedbackData> findByBookingFeedbackId(Long bookingId);
+    List<FeedbackData> findByBooking_Id(Long bookingId);
+
+    List<FeedbackData> findByUser_Id(Long userId);
 }

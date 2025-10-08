@@ -51,12 +51,12 @@ public class FeedBackService {
     @Cacheable(value = "feedbacks", key = "#bookingId")
     public List<FeedbackData> getFeedbacksByBookingId(Long bookingId) {
         log.debug("Fetching feedbacks for booking: {}", bookingId);
-        return feedbackRepository.findByBookingFeedbackId(bookingId);
+        return feedbackRepository.findByBooking_Id(bookingId);
     }
 
     public List<FeedbackData> getFeedbacksByUserId(Long userId) {
         log.debug("Fetching feedbacks for user: {}", userId);
-        return feedbackRepository.findByUserFeedbackId(userId);
+        return feedbackRepository.findByUser_Id(userId);
     }
 
     public List<FeedbackData> getAllFeedbacks() {
