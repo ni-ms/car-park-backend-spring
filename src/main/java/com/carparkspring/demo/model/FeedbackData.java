@@ -1,52 +1,47 @@
 package com.carparkspring.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "app_users")
-public class AppUser {
+@Table(name = "feedbacks")
+public class FeedbackData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long feedbackId;
 
-    @Column(unique = true, nullable = false)
-    private String username;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
+    @JsonIgnore
+    private AppUser user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bookingId", referencedColumnName = "id", nullable = false)
+    @JsonIgnore
+    private CarBookingData booking;
 
     @Column(nullable = false)
-    private String password;
+    private int rating; // 1-5
 
-    @Column(unique = true, nullable = false)
-    private String emailId;
+    @Column(length = 1000)
+    private String comments;
 
-    @Column(nullable = false)
-    private String role;
-
-    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private AppUserData appUserData;
-
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
-    private List<CarBookingData> carBookings;
+    private LocalDateTime feedbackTime;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @Version
     @Column(name = "version")

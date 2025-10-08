@@ -1,68 +1,115 @@
 package com.carparkspring.demo.service;
 
 import com.carparkspring.demo.model.AppAdmin;
+import com.carparkspring.demo.repository.AdminRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class AdminService implements UserDetails {
+@Service
+@Slf4j
+public class AdminService {
 
-    private AppAdmin appAdmin;
+    @Autowired
+    private AdminRepository adminRepository;
 
-    public AdminService(AppAdmin appAdmin) {
-        this.appAdmin = appAdmin;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public String addAdmin(AppAdmin admin) {
+        log.info("Adding new admin: {}", admin.getUsername());
+
+        if (adminRepository.existsByUsername(admin.getUsername())) {
+            throw new RuntimeException("Admin already exists with username: " + admin.getUsername());
+        }
+
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+
+        if (admin.getRoles() == null || admin.getRoles().isEmpty()) {
+            admin.setRoles("ADMIN");
+        }
+
+        adminRepository.save(admin);
+        log.info("Admin added successfully: {}", admin.getUsername());
+
+        return "Admin added successfully";
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.stream(appAdmin.getRoles().split(","))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+    public List<AppAdmin> getAllAdmins() {
+        return adminRepository.findAll();
     }
 
-    @Override
-    public String getPassword() {
-        return appAdmin.getPassword();
+    public AppAdmin getAdminByUsername(String username) {
+        return (AppAdmin) adminRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Admin not found: " + username));
     }
 
-    @Override
-    public String getUsername() {
-        return appAdmin.getEmailId();
-    }
+    // Inner class for UserDetails implementation
+    public static class AdminUserDetails implements UserDetails {
+        private final AppAdmin appAdmin;
 
-    public String getFirstName() {
-        return appAdmin.getFirstName();
-    }
+        public AdminUserDetails(AppAdmin appAdmin) {
+            this.appAdmin = appAdmin;
+        }
 
-    public String getLastName() {
-        return appAdmin.getLastName();
-    }
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return Arrays.stream(appAdmin.getRoles().split(","))
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .collect(Collectors.toList());
+        }
 
-    public String getMobileNumber() {
-        return appAdmin.getMobileNumber();
-    }
+        @Override
+        public String getPassword() {
+            return appAdmin.getPassword();
+        }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+        @Override
+        public String getUsername() {
+            return appAdmin.getEmailId();
+        }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+        public String getFirstName() {
+            return appAdmin.getFirstName();
+        }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+        public String getLastName() {
+            return appAdmin.getLastName();
+        }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
+        public String getMobileNumber() {
+            return appAdmin.getMobileNumber();
+        }
+
+        @Override
+        public boolean isAccountNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isAccountNonLocked() {
+            return true;
+        }
+
+        @Override
+        public boolean isCredentialsNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
     }
 }

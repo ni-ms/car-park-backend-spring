@@ -27,10 +27,9 @@ public class SecurityConfig {
     private JwtAuthFilter authFilter;
 
     // User Creation
-    @Bean
-    public UserService userDetailsService() {
-        return new UserService();
-    }
+    @Autowired
+    private UserService userService; // Let Spring inject it
+
 
     // Configuring HttpSecurity
     @Bean
@@ -38,7 +37,7 @@ public class SecurityConfig {
         // Fix the permit all configuration. Remove h2-console from permit all
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/carBookingData/**", "/parking/**").permitAll()
+                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/carBookingData/**", "/parking/**", "/ws/**", "/actuator/**").permitAll()
                         .requestMatchers("/auth/user/**").hasRole("USER")
                         .requestMatchers("/auth/admin/**").hasRole("ADMIN")
                         .requestMatchers("/auth/worker/**").hasRole("WORKER")
@@ -59,7 +58,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setUserDetailsService(userService); // Use injected service
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
