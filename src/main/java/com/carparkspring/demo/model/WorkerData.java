@@ -45,6 +45,11 @@ public class WorkerData {
     @JsonIgnore
     private List<CarBookingData> carBookings;
 
+    @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<WorkerTask> assignedTasks;
+
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

@@ -36,11 +36,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Fix the permit all configuration. Remove h2-console from permit all
         return http.csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/carBookingData/**", "/parking/**", "/ws/**", "/actuator/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/auth/user/**").hasRole("USER")
-                        .requestMatchers("/auth/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/auth/worker/**").hasRole("WORKER")
+                        .requestMatchers(
+                                "/auth/register",           // ADD THIS
+                                "/auth/login",              // ADD THIS
+                                "/auth/generateToken",      // Keep this for backward compatibility
+                                "/auth/welcome",
+                                "/auth/addNewUser",
+                                "/carBookingData/**",
+                                "/parking/**",
+                                "/ws/**",
+                                "/actuator/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/h2-console/**"            // ADD THIS for H2 console
+                        ).permitAll()
+                        .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")   // Change hasRole to hasAuthority
+                        .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN") // Change hasRole to hasAuthority
+                        .requestMatchers("/auth/worker/**").hasAuthority("ROLE_WORKER") // Change hasRole to hasAuthority
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

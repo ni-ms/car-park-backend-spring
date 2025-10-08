@@ -9,6 +9,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+
+
 @Component
 @Slf4j
 public class DefaultAdminInitializer implements CommandLineRunner {
